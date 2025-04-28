@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
+import { setupSwagger } from './utils/swagger.util';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,18 +12,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
-  const congig = new DocumentBuilder()
-  .setTitle('Auth API')
-  .setDescription('API documentation for auth')
-  .setVersion('1.0.0')
-  .setContact('Alex Kuklev', 'https://github.com/Necromayhem', 'example@mail.com')
-  .addBearerAuth()
-  .build();
+  setupSwagger(app);
 
-  const document = SwaggerModule.createDocument(app, congig);
-
-  SwaggerModule.setup('/docs', app, document);
-
+  
   await app.listen(3000);
 }
 bootstrap();
