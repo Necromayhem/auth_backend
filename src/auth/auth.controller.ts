@@ -6,6 +6,9 @@ import type { Request, Response } from 'express';
 import { ApiBadRequestResponse, ApiConflictResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { AuthResponse } from './dto/auth.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { Authorization } from './decorators/authorization.decorator';
+import { Authorized } from './decorators/authorized.decorator';
+import { User } from 'generated/prisma/client';
 
 
 @Controller('auth')
@@ -67,10 +70,10 @@ export class AuthController {
     return await this.authService.logout(res);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @Authorization()
   @Get('@me')
   @HttpCode(HttpStatus.OK)
-  async me(@Req() req: Request){
-    return req.user;
+  async me(@Authorized() user: User){
+    return user;
   }
 }
